@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { authService } from "../services/authService";
 import { useAsync } from "../hooks/useAsync";
 import { relationalService } from "../services/relationalService";
 import type { LearnerProfileRow } from "../types";
@@ -9,6 +11,12 @@ export function ProfilePage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [savedProfile, setSavedProfile] = useState<LearnerProfileRow | null>(null);
+  const navigate = useNavigate();
+
+  function signOut() {
+    authService.signOut();
+    navigate("/login", { replace: true });
+  }
 
   if (state.status !== "success") return <LoadState state={state.status} error={state.status === "error" ? state.error : undefined} />;
   const profile = savedProfile ?? state.data;
@@ -46,5 +54,6 @@ export function ProfilePage() {
       </Card>
     </div>
     <Card className="mt"><div className="row between"><div><p className="section-eyebrow">LEARNING PREFERENCES</p><h2>Practice reminders</h2><p className="muted mb-0">Reminder settings will sync when your account service is connected.</p></div><label className="check-row"><input type="checkbox" defaultChecked /> Daily reminder</label></div></Card>
+    <Card className="mt"><div className="row between"><div><p className="section-eyebrow">SESSION</p><h2>Sign out</h2><p className="muted mb-0">Sign out of CodeTrail on this device.</p></div><button className="btn btn-danger" type="button" onClick={signOut}>Sign out</button></div></Card>
   </>;
 }

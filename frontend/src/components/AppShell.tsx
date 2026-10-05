@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { authService } from "../services/authService";
 
 const learnerItems = [
   { to: "/", label: "Dashboard", icon: "⌂", end: true },
@@ -21,6 +22,7 @@ function navClass({ isActive }: { isActive: boolean }) {
 
 export function AppShell({ children }: { children: ReactNode }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const isAdmin = location.pathname.startsWith("/admin");
   const items = isAdmin ? adminItems : learnerItems;
   const [collapsed, setCollapsed] = useState(false);
@@ -43,6 +45,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <nav aria-label="Account menu">
               <NavLink to="/profile" className={navClass}><span className="nav-icon" aria-hidden="true">◎</span><span className="nav-label">Profile &amp; settings</span></NavLink>
               <NavLink to="/admin" className={navClass}><span className="nav-icon" aria-hidden="true">⚙</span><span className="nav-label">Admin preview</span></NavLink>
+              <button className="nav nav-button" type="button" title={collapsed ? "Sign out" : undefined} onClick={() => { authService.signOut(); navigate("/login", { replace: true }); }}><span className="nav-icon" aria-hidden="true">⏻</span><span className="nav-label">Sign out</span></button>
             </nav>
           </>
         )}
