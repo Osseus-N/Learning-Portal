@@ -1,6 +1,5 @@
 services:
 
-
   backend:
     build:
       context: ./docker/php
@@ -31,26 +30,20 @@ services:
       --port=8000
       "
 
- 
-  frontend:
+  vite:
     image: node:22-alpine
-    container_name: react_frontend
-    working_dir: /app
+    container_name: laravel_vite
+    working_dir: /var/www
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./backend:/var/www
+      - /var/www/node_modules
     ports:
       - "5173:5173"
-    environment:
-      VITE_API_URL: http://localhost:8000
     command: >
       sh -c "
       npm install &&
       npm run dev -- --host 0.0.0.0
       "
-    depends_on:
-      - backend
-
 
   mysql:
     image: mysql:8.4
@@ -65,7 +58,6 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-
 
   mongodb:
     image: mongo:8
